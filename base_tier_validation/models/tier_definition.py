@@ -55,7 +55,17 @@ class TierDefinition(models.Model):
     notify_on_create = fields.Boolean(
         string="Notify Reviewers on Creation",
         help="If set, all possible reviewers will be notified by email when "
-        "this definition is triggered.",
+             "this definition is triggered."
+    )
+    notify_by_sequence = fields.Boolean(
+        string="Notify Reviewers by Sequence",
+        help="If set, all possible reviewers will be notified by sequence when"
+             " this definition is triggered."
+    )
+    notify_creator_full_validated = fields.Boolean(
+        string="Notify Creator on Final Approbation Process",
+        help="If set, creator will be notified when"
+             " record is fully validated then this definition is triggered."
     )
     has_comment = fields.Boolean(string="Comment", default=False)
     approve_sequence = fields.Boolean(
@@ -68,3 +78,8 @@ class TierDefinition(models.Model):
     def onchange_review_type(self):
         self.reviewer_id = None
         self.reviewer_group_id = None
+
+    @api.onchange("approve_sequence")
+    def onchange_approve_sequence(self):
+        if not self.approve_sequence:
+            self.notify_by_sequence = False
