@@ -66,6 +66,8 @@
                             <field name="notify_on_create" />
                             <field name="has_comment" />
                             <field name="approve_sequence" />
+                            <field name="notify_by_sequence" attrs="{'invisible': [('approve_sequence', '=', False)]}"/>
+                            <field name="notify_creator_full_validated"/>
                         </group>
                     </group>
                     <group name="bottom">
