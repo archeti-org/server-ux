@@ -172,6 +172,23 @@ class TierValidation(models.AbstractModel):
             self.mapped('review_ids').unlink()
         return super(TierValidation, self).write(vals)
 
+    def _notify_record_full_validated_body(self):
+        return _('All reviews were approved.')
+
+    def _notify_creator_record_full_validated(self, requested_by):
+        if hasattr(self, 'message_post') and \
+                hasattr(self, 'message_subscribe'):
+            for rec in self:
+                getattr(rec, 'message_subscribe')(
+                    partner_ids=requested_by.partner_id.ids)
+                # Notify about full validated record by sending email
+                # to creator
+                getattr(rec, 'message_post')(
+                    message_type='email',
+                    body=self._notify_record_full_validated_body(),
+                    partner_ids=requested_by.partner_id.ids
+                    )
+
     def _validate_tier(self, tiers=False):
         self.ensure_one()
         tier_reviews = tiers or self.review_ids
@@ -200,6 +217,14 @@ class TierValidation(models.AbstractModel):
             for review in user_reviews:
                 rec = self.env[review.model].browse(review.res_id)
                 rec._notify_accepted_reviews()
+
+        notify_creator = any(tier_reviews.
+                             filtered(lambda r: r.definition_id.
+                                      notify_creator_full_validated))
+
+        if self.validated and notify_creator and tier_reviews:
+            self._notify_creator_record_full_validated(tier_reviews[0].
+                                                       requested_by)
 
     def _notify_accepted_reviews(self):
         if hasattr(self, 'message_post'):

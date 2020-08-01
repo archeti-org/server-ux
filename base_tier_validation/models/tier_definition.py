@@ -68,6 +68,11 @@ class TierDefinition(models.Model):
         help="If set, all possible reviewers will be notified by sequence when"
              " this definition is triggered."
     )
+    notify_creator_full_validated = fields.Boolean(
+        string="Notify Creator on Final Approbation Process",
+        help="If set, creator will be notified when"
+             " record is fully validated then this definition is triggered."
+    )
     has_comment = fields.Boolean(
         string='Comment',
         default=False,
