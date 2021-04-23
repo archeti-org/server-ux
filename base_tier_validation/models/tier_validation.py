@@ -229,15 +229,15 @@ class TierValidation(models.AbstractModel):
         return _("All reviews were approved.")
 
     def _notify_creator_record_full_validated(self, requested_by):
-        if hasattr(self, "message_post") and \
-            hasattr(self, "message_subscribe"):
+        if hasattr(self, "message_post") and hasattr(self, "message_subscribe"):
             for rec in self:
                 getattr(rec, "message_subscribe")(
-                    partner_ids=requested_by.partner_id.ids)
+                    partner_ids=requested_by.partner_id.ids
+                )
                 # Notify about full validated record by sending email
                 # to creator
                 getattr(rec, "message_post")(
-                    message_type='email',
+                    message_type="email",
                     body=self._notify_record_full_validated_body(),
                     partner_ids=requested_by.partner_id.ids,
                 )
@@ -255,9 +255,9 @@ class TierValidation(models.AbstractModel):
                 "reviewed_date": fields.Datetime.now(),
             }
         )
-        user_pending_reviews = tier_reviews. \
-            filtered(lambda r: r.definition_id.notify_by_sequence
-                               and r.status == 'pending')
+        user_pending_reviews = tier_reviews.filtered(
+            lambda r: r.definition_id.notify_by_sequence and r.status == 'pending'
+        )
         if user_pending_reviews:
             sequence = user_pending_reviews.mapped("sequence")
             sequence.sort()
@@ -279,8 +279,7 @@ class TierValidation(models.AbstractModel):
         )
 
         if self.validated and notify_creator and tier_reviews:
-            self._notify_creator_record_full_validated(tier_reviews[0].
-                                                       requested_by)
+            self._notify_creator_record_full_validated(tier_reviews[0].requested_by)
 
     def _get_requested_notification_subtype(self):
         return "base_tier_validation.mt_tier_validation_requested"
