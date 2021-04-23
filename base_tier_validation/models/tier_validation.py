@@ -256,7 +256,7 @@ class TierValidation(models.AbstractModel):
             }
         )
         user_pending_reviews = tier_reviews.filtered(
-            lambda r: r.definition_id.notify_by_sequence and r.status == 'pending'
+            lambda r: r.definition_id.notify_by_sequence and r.status == "pending"
         )
         if user_pending_reviews:
             sequence = user_pending_reviews.mapped("sequence")
