@@ -64,7 +64,10 @@
                             />
                             <field name="sequence" />
                             <field name="approve_sequence" />
-                            <field name="notify_by_sequence" attrs="{'invisible': [('approve_sequence', '=', False)]}" />
+                            <field
+                                name="notify_by_sequence"
+                                attrs="{'invisible': [('approve_sequence', '=', False)]}"
+                            />
                             <field name="notify_creator_full_validated" />
                         </group>
                     </group>
